@@ -1,0 +1,88 @@
+name: Test Java Client
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'test-clients/java/**'
+      - 'schemas/**'
+      - '.github/workflows/test-java.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'test-clients/java/**'
+      - 'schemas/**'
+      - '.github/workflows/test-java.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java-version: [ '11', '17', '21' ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Start Weaviate
+        run: |
+          docker-compose -f docker/weaviate/docker-compose-weaviate.yml up -d
+          echo "Waiting for Weaviate to be ready..."
+          timeout 60 bash -c 'until curl -s http://localhost:8080/v1/.well-known/ready > /dev/null; do sleep 2; done'
+          echo "Weaviate is ready!"
+
+      - name: Verify Weaviate
+        run: |
+          curl -s http://localhost:8080/v1/.well-known/ready
+          curl -s http://localhost:8080/v1/meta | jq .
+
+      - name: Install dependencies
+        working-directory: test-clients/java
+        run: mvn clean install -DskipTests
+
+      - name: Run tests
+        working-directory: test-clients/java
+        run: |
+          mvn test
+        env:
+          WEAVIATE_URL: localhost
+
+      - name: Generate test report
+        if: always()
+        working-directory: test-clients/java
+        run: mvn surefire-report:report-only
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-test-results-jdk${{ matrix.java-version }}
+          path: |
+            test-clients/java/target/surefire-reports/
+            test-clients/java/target/site/surefire-report.html
+            test-results/exported-schemas/java/
+
+      - name: Upload exported schemas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-exported-schemas-jdk${{ matrix.java-version }}
+          path: test-results/exported-schemas/java/
+
+      - name: Show Weaviate logs on failure
+        if: failure()
+        run: docker logs weaviate
+
+      - name: Cleanup
+        if: always()
+        run: docker-compose -f docker/weaviate/docker-compose-weaviate.yml down -v

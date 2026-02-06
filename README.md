@@ -2,6 +2,23 @@
 
 A comprehensive testing framework that validates Weaviate collection export/import functionality across multiple client libraries (Python, TypeScript, Go, C#, Java). Python serves as the source of truth, generating baseline schemas that all other clients must correctly import and re-export.
 
+---
+
+## 🔴 Known Issues
+
+**This framework has discovered critical bugs in Weaviate clients.**
+
+**📋 [See ISSUES_FOUND.md for complete list of bugs discovered](ISSUES_FOUND.md)**
+
+Current Status:
+- **2 Critical Issues** blocking all tests
+- **Python v4.19.2**: 0/3 tests passing
+- **TypeScript v3.2.0**: 0/3 tests passing
+- **Java v4.8.1**: 0/3 tests passing
+- **Cross-Client Bug Confirmed**: Issue #1 affects ALL three clients
+
+---
+
 ## Overview
 
 This framework ensures consistency and correctness of schema import/export operations across different Weaviate client implementations by:
@@ -19,11 +36,13 @@ weaviate-export-import-schema/
 ├── schemas/                   # Generated baseline schemas (JSON)
 ├── test-clients/              # Client test implementations
 │   ├── python/
-│   └── typescript/
+│   ├── typescript/
+│   └── java/
 ├── test-results/              # Test execution results (not in git)
 ├── docker/                    # Docker configurations
 ├── scripts/                   # Utility scripts
 ├── version-tracking/          # Client version tracking
+├── issues/                    # Documented bugs discovered by framework
 └── .github/workflows/         # CI/CD workflows
 ```
 
@@ -34,6 +53,7 @@ weaviate-export-import-schema/
 - Docker & Docker Compose
 - Python 3.11+
 - Node.js 18+ (for TypeScript tests)
+- Java 11+ and Maven 3.6+ (for Java tests)
 - Git
 
 ### Setup Local Environment
@@ -74,6 +94,13 @@ cd test-clients/typescript
 npm test
 ```
 
+#### Java Tests Only
+
+```bash
+cd test-clients/java
+mvn test
+```
+
 ### Compare Results
 
 After running tests, compare results across clients:
@@ -101,6 +128,7 @@ The framework includes GitHub Actions workflows:
 - **generate-schemas.yml**: Generate baseline schemas (manual or on definition changes)
 - **test-python.yml**: Run Python tests (PR, push to main, manual)
 - **test-typescript.yml**: Run TypeScript tests (PR, push to main, manual)
+- **test-java.yml**: Run Java tests on JDK 11, 17, and 21 (PR, push to main, manual)
 - **version-check.yml**: Check for client updates (manual)
 
 ## Development

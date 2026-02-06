@@ -1,0 +1,4 @@
+io/weaviate/schema/test/SchemaComparator$ComparisonResult.class
+io/weaviate/schema/test/SchemaTestRunner.class
+io/weaviate/schema/test/SchemaComparator.class
+io/weaviate/schema/test/SchemaTestRunner$TestResult.class

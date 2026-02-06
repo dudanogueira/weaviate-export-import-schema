@@ -54,6 +54,20 @@ else
     TYPESCRIPT_EXIT=0
 fi
 
+# Run Java tests
+echo ""
+echo "========================================="
+echo "Running Java tests..."
+echo "========================================="
+cd "$PROJECT_ROOT/test-clients/java"
+if [ -f "pom.xml" ] && command -v mvn &> /dev/null; then
+    mvn test
+    JAVA_EXIT=$?
+else
+    echo "WARNING: Java tests not available (Maven not found)"
+    JAVA_EXIT=0
+fi
+
 # Compare results
 echo ""
 echo "========================================="
@@ -70,10 +84,11 @@ echo "TEST SUMMARY"
 echo "========================================="
 echo "Python tests: $([ $PYTHON_EXIT -eq 0 ] && echo '✅ PASSED' || echo '❌ FAILED')"
 echo "TypeScript tests: $([ $TYPESCRIPT_EXIT -eq 0 ] && echo '✅ PASSED' || echo '❌ FAILED')"
+echo "Java tests: $([ $JAVA_EXIT -eq 0 ] && echo '✅ PASSED' || echo '❌ FAILED')"
 echo "Comparison: $([ $COMPARE_EXIT -eq 0 ] && echo '✅ PASSED' || echo '❌ FAILED')"
 
 # Exit with error if any test failed
-if [ $PYTHON_EXIT -ne 0 ] || [ $TYPESCRIPT_EXIT -ne 0 ] || [ $COMPARE_EXIT -ne 0 ]; then
+if [ $PYTHON_EXIT -ne 0 ] || [ $TYPESCRIPT_EXIT -ne 0 ] || [ $JAVA_EXIT -ne 0 ] || [ $COMPARE_EXIT -ne 0 ]; then
     exit 1
 fi
 
