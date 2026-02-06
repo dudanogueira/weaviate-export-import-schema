@@ -109,7 +109,7 @@ class SchemaGenerator:
                     name=collection_name,
                     description=config.get("description"),
                     properties=properties,
-                    vectorizer_config=vector_config,
+                    vector_config=vector_config,
                     replication_config=Configure.replication(
                         factor=config.get("replicationConfig", {}).get("factor", 1)
                     ),

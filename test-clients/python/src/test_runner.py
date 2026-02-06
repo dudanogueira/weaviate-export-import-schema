@@ -117,7 +117,7 @@ class TestRunner:
                     name=collection_name,
                     description=schema.get('description'),
                     properties=properties,
-                    vectorizer_config=vector_config,
+                    vector_config=vector_config,
                     replication_config=Configure.replication(
                         factor=schema.get('replicationConfig', {}).get('factor', 1)
                     ),
