@@ -1,0 +1,14 @@
+{
+  "tested_combinations": [
+    {
+      "date": "2026-02-06",
+      "weaviate": "1.25.0",
+      "clients": {
+        "python": "4.9.0",
+        "typescript": "3.2.0"
+      },
+      "schemas_tested": ["P0-basic-text-only", "P0-single-named-vector", "P0-multi-named-vectors"],
+      "result": "pending"
+    }
+  ]
+}

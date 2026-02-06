@@ -1,0 +1,60 @@
+name: Check Client Versions
+
+on:
+  workflow_dispatch:
+  # Uncomment to run daily:
+  # schedule:
+  #   - cron: '0 0 * * *'
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Check for version updates
+        id: version-check
+        run: |
+          python version-tracking/check_versions.py --output version-tracking/versions.json
+        continue-on-error: true
+
+      - name: Create issue if updates found
+        if: steps.version-check.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const versions = JSON.parse(fs.readFileSync('version-tracking/versions.json', 'utf8'));
+
+            let body = '## Client Version Updates Available\n\n';
+            let hasUpdates = false;
+
+            for (const [client, info] of Object.entries(versions.clients)) {
+              if (info.update_available) {
+                hasUpdates = true;
+                body += `### ${client}\n`;
+                body += `- Current: ${info.current}\n`;
+                body += `- Latest: ${info.latest}\n`;
+                body += `- Package: ${info.package_name}\n\n`;
+              }
+            }
+
+            if (hasUpdates) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Client version updates available',
+                body: body,
+                labels: ['dependencies', 'version-update']
+              });
+            }

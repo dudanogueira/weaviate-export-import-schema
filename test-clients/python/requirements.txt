@@ -1,0 +1,4 @@
+weaviate-client>=4.9.0
+pytest>=7.0.0
+deepdiff>=6.0.0
+requests>=2.31.0

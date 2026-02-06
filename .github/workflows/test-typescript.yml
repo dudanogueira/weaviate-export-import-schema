@@ -1,0 +1,50 @@
+name: Test TypeScript Client
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Weaviate
+        run: |
+          docker-compose -f docker/docker-compose.yml up -d
+          echo "Waiting for Weaviate to be ready..."
+          timeout 60 bash -c 'until curl -s http://localhost:8080/v1/.well-known/ready > /dev/null; do sleep 2; done'
+
+      - name: Install dependencies
+        working-directory: test-clients/typescript
+        run: |
+          npm install
+
+      - name: Run tests
+        working-directory: test-clients/typescript
+        run: |
+          npm test
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typescript-test-results
+          path: |
+            test-results/reports/typescript/
+            test-results/exported-schemas/typescript/
+
+      - name: Stop Weaviate
+        if: always()
+        run: |
+          docker-compose -f docker/docker-compose.yml down -v

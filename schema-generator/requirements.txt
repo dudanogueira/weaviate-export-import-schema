@@ -1,0 +1,2 @@
+weaviate-client>=4.9.0
+requests>=2.31.0

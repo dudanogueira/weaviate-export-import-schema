@@ -1,0 +1,55 @@
+name: Generate Baseline Schemas
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'schema-generator/src/schema_definitions.py'
+      - '.github/workflows/generate-schemas.yml'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Start Weaviate
+        run: |
+          docker-compose -f docker/docker-compose.yml up -d
+          echo "Waiting for Weaviate to be ready..."
+          timeout 60 bash -c 'until curl -s http://localhost:8080/v1/.well-known/ready > /dev/null; do sleep 2; done'
+
+      - name: Install dependencies
+        working-directory: schema-generator
+        run: |
+          pip install -r requirements.txt
+
+      - name: Generate schemas
+        working-directory: schema-generator
+        run: |
+          python -m src.cli generate-all --output-dir ../schemas
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code schemas/ || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push if changed
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add schemas/
+          git commit -m "Update baseline schemas [skip ci]"
+          git push
+
+      - name: Stop Weaviate
+        if: always()
+        run: |
+          docker-compose -f docker/docker-compose.yml down -v

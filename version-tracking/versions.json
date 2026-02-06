@@ -1,0 +1,15 @@
+{
+  "last_updated": "2026-02-06T00:00:00Z",
+  "clients": {
+    "python": {
+      "current": "4.9.0",
+      "package_name": "weaviate-client",
+      "package_manager": "pypi"
+    },
+    "typescript": {
+      "current": "3.2.0",
+      "package_name": "weaviate-client",
+      "package_manager": "npm"
+    }
+  }
+}
