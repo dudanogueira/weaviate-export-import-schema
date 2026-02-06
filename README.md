@@ -11,11 +11,12 @@ A comprehensive testing framework that validates Weaviate collection export/impo
 **📋 [See ISSUES_FOUND.md for complete list of bugs discovered](ISSUES_FOUND.md)**
 
 Current Status:
-- **2 Critical Issues** blocking all tests
-- **Python v4.19.2**: 0/3 tests passing
-- **TypeScript v3.2.0**: 0/3 tests passing
-- **Java v4.8.1**: 0/3 tests passing
-- **Cross-Client Bug Confirmed**: Issue #1 affects ALL three clients
+- **2 Critical Issues** discovered
+- **Python v4.19.2**: 0/3 tests passing (Issue #1)
+- **TypeScript v3.2.0**: 0/3 tests passing (Issue #1)
+- **Java v4.8.1**: 0/3 tests passing (Issue #1)
+- **C# v1.0.0**: 0/3 tests passing (Issue #1)
+- **Cross-Client Bug Confirmed**: Issue #1 affects ALL FOUR clients
 
 ---
 
@@ -37,7 +38,8 @@ weaviate-export-import-schema/
 ├── test-clients/              # Client test implementations
 │   ├── python/
 │   ├── typescript/
-│   └── java/
+│   ├── java/
+│   └── csharp/
 ├── test-results/              # Test execution results (not in git)
 ├── docker/                    # Docker configurations
 ├── scripts/                   # Utility scripts
@@ -54,6 +56,7 @@ weaviate-export-import-schema/
 - Python 3.11+
 - Node.js 18+ (for TypeScript tests)
 - Java 11+ and Maven 3.6+ (for Java tests)
+- .NET 8.0+ SDK (for C# tests)
 - Git
 
 ### Setup Local Environment
@@ -101,6 +104,13 @@ cd test-clients/java
 mvn test
 ```
 
+#### C# Tests Only
+
+```bash
+cd test-clients/csharp
+dotnet test
+```
+
 ### Compare Results
 
 After running tests, compare results across clients:
@@ -129,6 +139,7 @@ The framework includes GitHub Actions workflows:
 - **test-python.yml**: Run Python tests (PR, push to main, manual)
 - **test-typescript.yml**: Run TypeScript tests (PR, push to main, manual)
 - **test-java.yml**: Run Java tests on JDK 11, 17, and 21 (PR, push to main, manual)
+- **test-csharp.yml**: Run C# tests on .NET 8.0 and 9.0 (PR, push to main, manual)
 - **version-check.yml**: Check for client updates (manual)
 
 ## Development

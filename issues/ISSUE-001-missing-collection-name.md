@@ -1,6 +1,6 @@
 # Issue #1: Missing Collection Name in Exported Schemas
 
-**Status**: 🔴 CONFIRMED - AFFECTS ALL TESTED CLIENTS
+**Status**: 🔴 CONFIRMED - AFFECTS ALL FOUR TESTED CLIENTS
 
 **Severity**: Critical (Blocks 100% of workflows)
 
@@ -8,6 +8,7 @@
 - ❌ Python v4.19.2
 - ❌ TypeScript v3.2.0
 - ❌ Java v4.8.1
+- ❌ C# v1.0.0
 
 **Root Cause**: Confirmed cross-client bug - Weaviate server or coordinated API design flaw
 
@@ -237,13 +238,13 @@ This bug affects:
 
 ### Test Results
 
-| Test Schema | Python | TypeScript | Java | Result |
-|-------------|--------|------------|------|--------|
-| P0-basic-text-only | ❌ FAIL | ❌ FAIL | ❌ FAIL | All blocked |
-| P0-single-named-vector | ❌ FAIL | ❌ FAIL | ❌ FAIL | All blocked |
-| P0-multi-named-vectors | ❌ FAIL | ❌ FAIL | ❌ FAIL | All blocked |
+| Test Schema | Python | TypeScript | Java | C# | Result |
+|-------------|--------|------------|------|-------|--------|
+| P0-basic-text-only | ❌ FAIL | ❌ FAIL | ❌ FAIL | ❌ FAIL | All blocked |
+| P0-single-named-vector | ❌ FAIL | ❌ FAIL | ❌ FAIL | ❌ FAIL | All blocked |
+| P0-multi-named-vectors | ❌ FAIL | ❌ FAIL | ❌ FAIL | ❌ FAIL | All blocked |
 
-**Overall**: 0/9 tests passing (0% across all three clients)
+**Overall**: 0/12 tests passing (0% across all four clients)
 
 ---
 
@@ -251,11 +252,11 @@ This bug affects:
 
 ### Cross-Client Evidence
 
-The fact that **Python, TypeScript, AND Java** all have the identical issue confirms:
+The fact that **Python, TypeScript, Java, AND C#** all have the identical issue confirms:
 
 1. **Most Likely**: Weaviate server doesn't include collection name in the serialized schema response
 2. **Also Possible**: Coordinated API design flaw across all official clients deliberately omits this field
-3. **Confirmed**: This is NOT a client-specific bug - it affects all three major client libraries
+3. **Confirmed**: This is NOT a client-specific bug - it affects ALL FOUR major client libraries
 3. **Least Likely**: Independent bug in multiple client implementations
 
 ### What Needs Investigation

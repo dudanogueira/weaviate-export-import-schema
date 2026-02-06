@@ -15,6 +15,7 @@ These are NOT workarounds or implementation quirks - these are actual incompatib
 - **Python Client Version**: 4.19.2
 - **TypeScript Client Version**: 3.2.0
 - **Java Client Version**: 4.8.1
+- **C# Client Version**: 1.0.0
 - **Framework Version**: 0.1.0
 
 ---
@@ -25,7 +26,7 @@ These are NOT workarounds or implementation quirks - these are actual incompatib
 
 | Issue | Title | Severity | Clients | Status |
 |-------|-------|----------|---------|--------|
-| **[#1](issues/ISSUE-001-missing-collection-name.md)** | Missing Collection Name in Exported Schemas | Critical | Python, TypeScript, Java | 🔴 CONFIRMED |
+| **[#1](issues/ISSUE-001-missing-collection-name.md)** | Missing Collection Name in Exported Schemas | Critical | Python, TypeScript, Java, C# | 🔴 CONFIRMED |
 | **[#2](issues/ISSUE-002-distance-metric-corruption.md)** | Distance Metric Not Preserved for Named Vectors | Critical | Python | 🔴 CONFIRMED |
 
 ### 🟡 Warnings (Non-Blocking)
@@ -40,11 +41,11 @@ These are NOT workarounds or implementation quirks - these are actual incompatib
 ## Quick Links to Issues
 
 ### [Issue #1: Missing Collection Name in Exported Schemas](issues/ISSUE-001-missing-collection-name.md)
-- **Status**: 🔴 CONFIRMED - AFFECTS ALL TESTED CLIENTS
+- **Status**: 🔴 CONFIRMED - AFFECTS ALL FOUR TESTED CLIENTS
 - **Impact**: BLOCKS 100% of schema import/export workflows
-- **Clients**: Python v4.19.2, TypeScript v3.2.0, Java v4.8.1
+- **Clients**: Python v4.19.2, TypeScript v3.2.0, Java v4.8.1, C# v1.0.0
 - **Root**: Confirmed cross-client bug - likely Weaviate server or API design issue
-- **Tests Failed**: 9/9 (all three clients, all schemas)
+- **Tests Failed**: 12/12 (all four clients, all schemas)
 
 ### [Issue #2: Distance Metric Not Preserved for Named Vectors](issues/ISSUE-002-distance-metric-corruption.md)
 - **Status**: 🔴 CONFIRMED - DATA CORRUPTION BUG
@@ -95,9 +96,17 @@ These are NOT workarounds or implementation quirks - these are actual incompatib
 | P0-single-named-vector | ❌ FAIL | [#1](issues/ISSUE-001-missing-collection-name.md) (missing name) |
 | P0-multi-named-vectors | ❌ FAIL | [#1](issues/ISSUE-001-missing-collection-name.md) (missing name) |
 
-**Combined Result**: 0/9 passing (0% across all three clients)
+### C# v1.0.0
 
-**Key Finding**: [Issue #1](issues/ISSUE-001-missing-collection-name.md) affects **Python, TypeScript, AND Java**, confirming it's a cross-client bug (likely Weaviate server or API issue).
+| Test Schema | Result | Issues Blocking |
+|-------------|--------|-----------------|
+| P0-basic-text-only | ❌ FAIL | [#1](issues/ISSUE-001-missing-collection-name.md) (missing name) |
+| P0-single-named-vector | ❌ FAIL | [#1](issues/ISSUE-001-missing-collection-name.md) (missing name) |
+| P0-multi-named-vectors | ❌ FAIL | [#1](issues/ISSUE-001-missing-collection-name.md) (missing name) |
+
+**Combined Result**: 0/12 passing (0% across all four clients)
+
+**Key Finding**: [Issue #1](issues/ISSUE-001-missing-collection-name.md) affects **Python, TypeScript, Java, AND C#**, confirming it's a cross-client bug (Weaviate server or API design issue).
 
 ---
 
@@ -113,8 +122,9 @@ These are NOT workarounds or implementation quirks - these are actual incompatib
 - **Python Client**: 3 issues ([#1](issues/ISSUE-001-missing-collection-name.md), [#2](issues/ISSUE-002-distance-metric-corruption.md), [#3](issues/ISSUE-003-deprecated-parameter.md))
 - **TypeScript Client**: 1 issue ([#1](issues/ISSUE-001-missing-collection-name.md))
 - **Java Client**: 1 issue ([#1](issues/ISSUE-001-missing-collection-name.md))
+- **C# Client**: 1 issue ([#1](issues/ISSUE-001-missing-collection-name.md))
 - **Framework Code**: 1 issue ([#4](issues/ISSUE-004-pytest-warning.md))
-- **Cross-Client**: 1 issue affects ALL clients ([#1](issues/ISSUE-001-missing-collection-name.md))
+- **Cross-Client**: 1 issue affects ALL FOUR clients ([#1](issues/ISSUE-001-missing-collection-name.md))
 
 ### By Status
 

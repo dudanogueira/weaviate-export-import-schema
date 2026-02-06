@@ -20,6 +20,29 @@ yarn-debug.log*
 yarn-error.log*
 .npm
 
+# Java
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+mvnw
+mvnw.cmd
+
+# C#
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.user
+*.suo
+*.cache
+TestResults/
+[Dd]ebug/
+[Rr]elease/
+
 # Test results (not version controlled)
 test-results/
 

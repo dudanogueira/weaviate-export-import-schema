@@ -15,6 +15,11 @@
       "current": "4.8.1",
       "package_name": "io.weaviate:client",
       "package_manager": "maven"
+    },
+    "csharp": {
+      "current": "1.0.0",
+      "package_name": "Weaviate.Client",
+      "package_manager": "nuget"
     }
   }
 }

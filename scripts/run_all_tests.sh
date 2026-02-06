@@ -68,6 +68,20 @@ else
     JAVA_EXIT=0
 fi
 
+# Run C# tests
+echo ""
+echo "========================================="
+echo "Running C# tests..."
+echo "========================================="
+cd "$PROJECT_ROOT/test-clients/csharp"
+if [ -f "WeaviateSchemaTest.csproj" ] && command -v dotnet &> /dev/null; then
+    dotnet test
+    CSHARP_EXIT=$?
+else
+    echo "WARNING: C# tests not available (.NET SDK not found)"
+    CSHARP_EXIT=0
+fi
+
 # Compare results
 echo ""
 echo "========================================="
@@ -85,10 +99,11 @@ echo "========================================="
 echo "Python tests: $([ $PYTHON_EXIT -eq 0 ] && echo '✅ PASSED' || echo '❌ FAILED')"
 echo "TypeScript tests: $([ $TYPESCRIPT_EXIT -eq 0 ] && echo '✅ PASSED' || echo '❌ FAILED')"
 echo "Java tests: $([ $JAVA_EXIT -eq 0 ] && echo '✅ PASSED' || echo '❌ FAILED')"
+echo "C# tests: $([ $CSHARP_EXIT -eq 0 ] && echo '✅ PASSED' || echo '❌ FAILED')"
 echo "Comparison: $([ $COMPARE_EXIT -eq 0 ] && echo '✅ PASSED' || echo '❌ FAILED')"
 
 # Exit with error if any test failed
-if [ $PYTHON_EXIT -ne 0 ] || [ $TYPESCRIPT_EXIT -ne 0 ] || [ $JAVA_EXIT -ne 0 ] || [ $COMPARE_EXIT -ne 0 ]; then
+if [ $PYTHON_EXIT -ne 0 ] || [ $TYPESCRIPT_EXIT -ne 0 ] || [ $JAVA_EXIT -ne 0 ] || [ $CSHARP_EXIT -ne 0 ] || [ $COMPARE_EXIT -ne 0 ]; then
     exit 1
 fi
 

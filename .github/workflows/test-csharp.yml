@@ -1,0 +1,84 @@
+name: Test C# Client
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'test-clients/csharp/**'
+      - 'schemas/**'
+      - '.github/workflows/test-csharp.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'test-clients/csharp/**'
+      - 'schemas/**'
+      - '.github/workflows/test-csharp.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dotnet-version: [ '8.0.x', '9.0.x' ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Start Weaviate
+        run: |
+          docker-compose -f docker/weaviate/docker-compose-weaviate.yml up -d
+          echo "Waiting for Weaviate to be ready..."
+          timeout 60 bash -c 'until curl -s http://localhost:8080/v1/.well-known/ready > /dev/null; do sleep 2; done'
+          echo "Weaviate is ready!"
+
+      - name: Verify Weaviate
+        run: |
+          curl -s http://localhost:8080/v1/.well-known/ready
+          curl -s http://localhost:8080/v1/meta | jq .
+
+      - name: Restore dependencies
+        working-directory: test-clients/csharp
+        run: dotnet restore
+
+      - name: Build
+        working-directory: test-clients/csharp
+        run: dotnet build --no-restore
+
+      - name: Run tests
+        working-directory: test-clients/csharp
+        run: |
+          dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+        env:
+          WEAVIATE_URL: localhost
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: csharp-test-results-dotnet${{ matrix.dotnet-version }}
+          path: |
+            test-clients/csharp/TestResults/
+            test-results/exported-schemas/csharp/
+
+      - name: Upload exported schemas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: csharp-exported-schemas-dotnet${{ matrix.dotnet-version }}
+          path: test-results/exported-schemas/csharp/
+
+      - name: Show Weaviate logs on failure
+        if: failure()
+        run: docker logs weaviate
+
+      - name: Cleanup
+        if: always()
+        run: docker-compose -f docker/weaviate/docker-compose-weaviate.yml down -v
