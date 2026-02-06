@@ -1,0 +1,6 @@
+{
+  "name": "P0-basic-text-only",
+  "description": "Simple collection with text properties only, no vectors",
+  "priority": "P0",
+  "collection_name": "BasicTextOnly"
+}

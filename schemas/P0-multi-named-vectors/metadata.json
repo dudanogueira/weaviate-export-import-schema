@@ -1,0 +1,6 @@
+{
+  "name": "P0-multi-named-vectors",
+  "description": "Collection with multiple named vectors",
+  "priority": "P0",
+  "collection_name": "MultiNamedVectors"
+}

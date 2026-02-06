@@ -1,0 +1,95 @@
+{
+  "description": "Test collection with text properties and no vector configuration",
+  "invertedIndexConfig": {
+    "bm25": {
+      "b": 0.75,
+      "k1": 1.2
+    },
+    "cleanupIntervalSeconds": 60,
+    "indexNullState": false,
+    "indexPropertyLength": false,
+    "indexTimestamps": false,
+    "stopwords": {
+      "preset": "en"
+    }
+  },
+  "multiTenancyConfig": {
+    "enabled": false,
+    "autoTenantCreation": false,
+    "autoTenantActivation": false
+  },
+  "properties": [
+    {
+      "name": "title",
+      "description": "Title of the document",
+      "dataType": [
+        "text"
+      ],
+      "indexFilterable": true,
+      "indexSearchable": true,
+      "indexRangeFilters": false,
+      "tokenization": "word"
+    },
+    {
+      "name": "content",
+      "description": "Main content of the document",
+      "dataType": [
+        "text"
+      ],
+      "indexFilterable": true,
+      "indexSearchable": true,
+      "indexRangeFilters": false,
+      "tokenization": "word"
+    },
+    {
+      "name": "category",
+      "description": "Category classification",
+      "dataType": [
+        "text"
+      ],
+      "indexFilterable": true,
+      "indexSearchable": true,
+      "indexRangeFilters": false,
+      "tokenization": "word"
+    }
+  ],
+  "replicationConfig": {
+    "factor": 1,
+    "asyncEnabled": false,
+    "deletionStrategy": "TimeBasedResolution"
+  },
+  "shardingConfig": {
+    "virtualPerPhysical": 128,
+    "desiredCount": 1,
+    "actualCount": 1,
+    "desiredVirtualCount": 128,
+    "actualVirtualCount": 128,
+    "key": "_id",
+    "strategy": "hash",
+    "function": "murmur3"
+  },
+  "vectorConfig": {
+    "default": {
+      "vectorizer": {
+        "none": {}
+      },
+      "vectorIndexConfig": {
+        "cleanupIntervalSeconds": 300,
+        "distanceMetric": "cosine",
+        "dynamicEfMin": 100,
+        "dynamicEfMax": 500,
+        "dynamicEfFactor": 8,
+        "ef": -1,
+        "efConstruction": 128,
+        "filterStrategy": "acorn",
+        "flatSearchCutoff": 40000,
+        "maxConnections": 32,
+        "skip": false,
+        "vectorCacheMaxObjects": 1000000000000
+      },
+      "vectorIndexType": "hnsw"
+    }
+  },
+  "class": "BasicTextOnly",
+  "moduleConfig": {}
+}

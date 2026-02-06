@@ -1,0 +1,6 @@
+{
+  "name": "P0-single-named-vector",
+  "description": "Collection with one named vector configuration",
+  "priority": "P0",
+  "collection_name": "SingleNamedVector"
+}

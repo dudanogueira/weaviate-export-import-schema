@@ -107,7 +107,8 @@ class TestRunner:
                     )
                 )
 
-            vector_config = Configure.VectorIndex.multi_vector(vector_configs)
+            # For multiple named vectors, pass the list of configs directly
+            vector_config = list(vector_configs.values())
 
         # Create collection
         try:

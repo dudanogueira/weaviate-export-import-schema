@@ -83,7 +83,6 @@ class SchemaGenerator:
 
         if "vectorConfig" in config:
             # Multi-named vectors or single named vector
-            from weaviate.classes.config import Configure
             vector_configs = {}
 
             for vector_name, vector_def in config["vectorConfig"].items():
@@ -97,7 +96,8 @@ class SchemaGenerator:
                     )
                 )
 
-            vector_config = Configure.VectorIndex.multi_vector(vector_configs)
+            # For multiple named vectors, pass the list of configs directly
+            vector_config = list(vector_configs.values())
         elif config.get("vectorizer") == "none":
             # No vectors at all
             vector_config = None
