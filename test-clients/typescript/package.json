@@ -9,7 +9,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "weaviate-client": "^3.2.0"
+    "weaviate-client": "github:dudanogueira/typescript-client#resilient-create-from-schema"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

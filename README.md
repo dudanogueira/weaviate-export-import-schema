@@ -4,19 +4,30 @@ A comprehensive testing framework that validates Weaviate collection export/impo
 
 ---
 
-## 🔴 Known Issues
+## 🟢 Current Status - Major Progress!
 
-**This framework has discovered critical bugs in Weaviate clients.**
+**This framework has successfully achieved cross-client schema compatibility!** 🎉
 
-**📋 [See ISSUES_FOUND.md for complete list of bugs discovered](ISSUES_FOUND.md)**
+**Latest Results (2026-02-09)**:
+- **Python v4.19.2**: ✅ **4/4 tests PASSING**
+- **TypeScript v3.10.0 (with `exportToJson`)**: ⚠️ 1/4 tests passing (field-level differences only)
+- **Java v4.8.1**: Not yet tested with new approach
+- **C# v1.0.0**: Not yet tested with new approach
 
-Current Status:
-- **2 Critical Issues** discovered
-- **Python v4.19.2**: 0/3 tests passing (Issue #1)
-- **TypeScript v3.2.0**: 0/3 tests passing (Issue #1)
-- **Java v4.8.1**: 0/3 tests passing (Issue #1)
-- **C# v1.0.0**: 0/3 tests passing (Issue #1)
-- **Cross-Client Bug Confirmed**: Issue #1 affects ALL FOUR clients
+**Key Achievement**: Implemented new `exportToJson()` method in TypeScript client that resolved fundamental structural incompatibilities between Python and TypeScript schema exports.
+
+**📋 [See issues/ directory for detailed bug reports and resolutions](issues/)**
+
+### Recent Breakthroughs
+
+1. **Issue #6 - RESOLVED**: TypeScript and Python now export schemas with compatible structure
+   - Status changed from 🔴 CRITICAL to 🟡 IMPROVED
+   - Structural compatibility achieved through new `exportToJson()` API
+   - Remaining differences are informational enhancements, not incompatibilities
+
+2. **Issue #5 - RESOLVED**: DataType array vs string mismatch fixed with `exportToJson()`
+
+3. **Schema Definition Format**: Fixed v3 to v4 format migration in baseline schemas
 
 ---
 

@@ -154,11 +154,10 @@ export class TestRunner {
     }
 
     try {
-      const collection = this.client.collections.get(collectionName);
-      const config = await collection.config.get();
+      const exported = await this.client.collections.exportToJson(collectionName);
 
       console.log(`Exported schema for collection: ${collectionName}`);
-      return config;
+      return exported;
     } catch (error) {
       console.error(`Failed to export schema:`, error);
       throw error;

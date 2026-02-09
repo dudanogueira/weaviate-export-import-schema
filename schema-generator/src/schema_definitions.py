@@ -45,7 +45,25 @@ P0_BASIC_TEXT_ONLY = SchemaDefinition(
                 "description": "Category classification"
             }
         ],
-        "vectorizer": "none",
+        "vectorConfig": {
+            "default": {
+                "vectorIndexType": "hnsw",
+                "vectorIndexConfig": {
+                    "ef": -1,
+                    "efConstruction": 128,
+                    "maxConnections": 32,
+                    "dynamicEfMin": 100,
+                    "dynamicEfMax": 500,
+                    "dynamicEfFactor": 8,
+                    "skip": False,
+                    "flatSearchCutoff": 40000,
+                    "distance": "cosine"
+                },
+                "vectorizer": {
+                    "none": {}
+                }
+            }
+        },
         "replicationConfig": {
             "factor": 1
         },

@@ -5,8 +5,6 @@ import logging
 from pathlib import Path
 from typing import Dict, Any, Optional
 import weaviate
-from weaviate.classes.config import Configure, Property, DataType
-from weaviate.classes.config import VectorDistances
 
 from .schema_definitions import SchemaDefinition
 
@@ -63,78 +61,9 @@ class SchemaGenerator:
 
         logger.info(f"Creating collection: {collection_name}")
 
-        # Build properties
-        properties = []
-        for prop in config.get("properties", []):
-            # Map string dataType to enum
-            data_type_str = prop["dataType"][0].upper()
-            data_type = getattr(DataType, data_type_str)
-
-            properties.append(
-                Property(
-                    name=prop["name"],
-                    data_type=data_type,
-                    description=prop.get("description")
-                )
-            )
-
-        # Handle different vectorizer configurations
-        vector_config = None
-
-        if "vectorConfig" in config:
-            # Multi-named vectors or single named vector
-            vector_configs = {}
-
-            for vector_name, vector_def in config["vectorConfig"].items():
-                distance_str = vector_def.get("vectorIndexConfig", {}).get("distance", "cosine")
-                distance = getattr(VectorDistances, distance_str.upper())
-
-                vector_configs[vector_name] = Configure.Vectors.self_provided(
-                    name=vector_name,
-                    vector_index_config=Configure.VectorIndex.hnsw(
-                        distance_metric=distance
-                    )
-                )
-
-            # For multiple named vectors, pass the list of configs directly
-            vector_config = list(vector_configs.values())
-        elif config.get("vectorizer") == "none":
-            # No vectors at all
-            vector_config = None
-
-        # Create collection
+        # Create collection directly from dictionary
         try:
-            if vector_config:
-                collection = self.client.collections.create(
-                    name=collection_name,
-                    description=config.get("description"),
-                    properties=properties,
-                    vector_config=vector_config,
-                    replication_config=Configure.replication(
-                        factor=config.get("replicationConfig", {}).get("factor", 1)
-                    ),
-                    inverted_index_config=Configure.inverted_index(
-                        index_null_state=config.get("invertedIndexConfig", {}).get("indexNullState", False),
-                        index_property_length=config.get("invertedIndexConfig", {}).get("indexPropertyLength", False),
-                        index_timestamps=config.get("invertedIndexConfig", {}).get("indexTimestamps", False)
-                    )
-                )
-            else:
-                # Collection without vectors
-                collection = self.client.collections.create(
-                    name=collection_name,
-                    description=config.get("description"),
-                    properties=properties,
-                    replication_config=Configure.replication(
-                        factor=config.get("replicationConfig", {}).get("factor", 1)
-                    ),
-                    inverted_index_config=Configure.inverted_index(
-                        index_null_state=config.get("invertedIndexConfig", {}).get("indexNullState", False),
-                        index_property_length=config.get("invertedIndexConfig", {}).get("indexPropertyLength", False),
-                        index_timestamps=config.get("invertedIndexConfig", {}).get("indexTimestamps", False)
-                    )
-                )
-
+            self.client.collections.create_from_dict(config)
             logger.info(f"Successfully created collection: {collection_name}")
             return collection_name
 

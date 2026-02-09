@@ -98,7 +98,9 @@ class TestRunner:
             vector_configs = {}
 
             for vector_name, vector_def in schema['vectorConfig'].items():
-                distance_str = vector_def.get('vectorIndexConfig', {}).get('distance', 'cosine')
+                # Support both 'distanceMetric' (exported) and 'distance' (definition) keys
+                vector_index_config = vector_def.get('vectorIndexConfig', {})
+                distance_str = vector_index_config.get('distanceMetric') or vector_index_config.get('distance', 'cosine')
                 distance = getattr(VectorDistances, distance_str.upper())
 
                 vector_configs[vector_name] = Configure.Vectors.self_provided(

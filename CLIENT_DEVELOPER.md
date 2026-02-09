@@ -776,6 +776,66 @@ To test local client changes in CI:
 git+https://github.com/your-username/weaviate-python@your-branch
 ```
 
+### ⚠️ IMPORTANT: TypeScript GitHub Installations Require Build
+
+**Critical for TypeScript Client Developers:**
+
+When installing a TypeScript client from GitHub (not npm registry), npm **does not automatically run build scripts**. This means the client code won't be compiled and tests will fail with module resolution errors.
+
+**Problem:**
+```bash
+npm install github:username/typescript-client#branch-name
+npm test
+# Error: Failed to resolve entry for package "weaviate-client"
+# The package may have incorrect main/module/exports specified
+```
+
+**Solution:**
+
+Your forked TypeScript client repository **MUST** include a `prepare` script in `package.json` to auto-build on installation:
+
+```json
+{
+  "name": "weaviate-client",
+  "scripts": {
+    "prepare": "npm run build",
+    "prepack": "npm run build",
+    "build": "npm run build:node",
+    "build:node": "npm run lint && npm run build:cjs && npm run build:esm && prettier --write --no-error-on-unmatched-pattern '**/dist/**/*.{ts,js}'"
+  }
+}
+```
+
+**Key Points:**
+
+1. **`prepare` script**: Runs automatically after `npm install` from GitHub
+2. **`prepack` script**: Runs before creating a package (for npm publish)
+3. **Both are needed**: `prepare` for GitHub installs, `prepack` for npm publish
+
+**Why This Matters:**
+
+- ✅ Local file installations (`file:/path/to/client`) work because you manually built
+- ❌ GitHub installations (`github:user/repo#branch`) fail without `prepare`
+- ✅ npm registry installations work because they include pre-built `dist/` files
+
+**Verification:**
+
+After adding the `prepare` script to your fork:
+
+```bash
+# Test that GitHub installation works
+cd test-clients/typescript
+npm install
+npm test  # Should now work without manual build!
+```
+
+**Alternative (Not Recommended):**
+
+If you cannot modify the client repository, you can commit built files (`dist/`) to your branch, but this is not recommended because:
+- Bloats the repository with generated files
+- Creates merge conflicts
+- Goes against TypeScript best practices
+
 ---
 
 ## Summary
