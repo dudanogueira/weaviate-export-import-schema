@@ -64,9 +64,10 @@ class TestRunner:
         if not self.client:
             raise RuntimeError("Not connected to Weaviate. Call connect() first.")
 
-        collection_name = schema.get('name')
+        # Support both 'name' (v4) and 'class' (v3/legacy) for backward compatibility
+        collection_name = schema.get('name') or schema.get('class')
         if not collection_name:
-            raise ValueError("Schema missing 'name' field")
+            raise ValueError("Schema missing 'name' or 'class' field")
 
         # Delete if exists
         if self.client.collections.exists(collection_name):
@@ -100,7 +101,7 @@ class TestRunner:
                 distance_str = vector_def.get('vectorIndexConfig', {}).get('distance', 'cosine')
                 distance = getattr(VectorDistances, distance_str.upper())
 
-                vector_configs[vector_name] = Configure.NamedVectors.none(
+                vector_configs[vector_name] = Configure.Vectors.self_provided(
                     name=vector_name,
                     vector_index_config=Configure.VectorIndex.hnsw(
                         distance_metric=distance

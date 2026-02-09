@@ -19,6 +19,16 @@ export class SchemaComparator {
     delete normalized.creationTimeUnix;
     delete normalized.lastUpdateTimeUnix;
 
+    // Normalize 'class' to 'name' for v3/v4 compatibility
+    // Both fields refer to the collection name
+    if (normalized.class && !normalized.name) {
+      normalized.name = normalized.class;
+      delete normalized.class;
+    } else if (normalized.class && normalized.name) {
+      // If both exist, remove 'class' and keep 'name'
+      delete normalized.class;
+    }
+
     // Sort properties by name for consistent comparison
     if (normalized.properties) {
       normalized.properties = normalized.properties.sort((a: any, b: any) =>

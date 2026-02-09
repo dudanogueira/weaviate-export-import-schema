@@ -65,9 +65,10 @@ export class TestRunner {
       throw new Error('Not connected to Weaviate. Call connect() first.');
     }
 
-    const collectionName = schema.name;
+    // Support both 'name' (v4) and 'class' (v3/legacy) for backward compatibility
+    const collectionName = schema.name || schema.class;
     if (!collectionName) {
-      throw new Error('Schema missing "name" field');
+      throw new Error('Schema missing "name" or "class" field');
     }
 
     // Delete if exists

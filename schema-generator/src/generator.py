@@ -89,7 +89,7 @@ class SchemaGenerator:
                 distance_str = vector_def.get("vectorIndexConfig", {}).get("distance", "cosine")
                 distance = getattr(VectorDistances, distance_str.upper())
 
-                vector_configs[vector_name] = Configure.NamedVectors.none(
+                vector_configs[vector_name] = Configure.Vectors.self_provided(
                     name=vector_name,
                     vector_index_config=Configure.VectorIndex.hnsw(
                         distance_metric=distance

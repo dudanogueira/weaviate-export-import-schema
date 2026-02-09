@@ -46,6 +46,14 @@ class SchemaComparator:
         normalized.pop('creationTimeUnix', None)
         normalized.pop('lastUpdateTimeUnix', None)
 
+        # Normalize 'class' to 'name' for v3/v4 compatibility
+        # Both fields refer to the collection name
+        if 'class' in normalized and 'name' not in normalized:
+            normalized['name'] = normalized.pop('class')
+        elif 'class' in normalized and 'name' in normalized:
+            # If both exist, remove 'class' and keep 'name'
+            normalized.pop('class')
+
         # Sort properties by name for consistent comparison
         if 'properties' in normalized:
             normalized['properties'] = sorted(
